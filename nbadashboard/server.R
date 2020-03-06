@@ -25,7 +25,7 @@ server <- function(input, output) {
         print(input$leaderboard_seasonInput)
         print(input$leaderboard_statsInput)
         
-        d_season_combined %>% select(Player, Tm, !!!stats()) %>% 
+        d_season_combined %>% select(Player, Team, !!!stats()) %>% 
             arrange(desc(!!!stats())) %>% 
             top_n(100)
         
@@ -35,7 +35,7 @@ server <- function(input, output) {
         
     })
     
-    stats_names <- d_season_combined %>% select(-c(Player, Pos, Age, Tm, Season))
+    stats_names <- d_season_combined %>% select(-c(Player, Pos, Age, Team, Season))
     
     
     # ------------ Player evolution ------------------
@@ -67,7 +67,7 @@ server <- function(input, output) {
     
     
     output$player_team <- renderText({
-        team=(d_season_combined %>% filter(Player==player()) %>% select(Tm))[1,]
+        team=(d_season_combined %>% filter(Player==player()) %>% select(Team))[1,]
         paste("Team : ", team )
     })
     

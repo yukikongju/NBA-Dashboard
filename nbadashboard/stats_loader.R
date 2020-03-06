@@ -1,9 +1,5 @@
 
 
-
-
-
-
 #---------------------------- Dependencies -------------------------------------------
 
 library(rvest)
@@ -44,7 +40,7 @@ getStats <-  function(url, season) {
     distinct(Player, .keep_all = TRUE) %>%
     filter(!Player == "Player") %>%
     mutate_all(na_if, "") %>% 
-    
+    rename(Team=Tm)
   
   iteration = parent.frame()$i[]
   
@@ -67,7 +63,7 @@ d_advanced_raw <-
 d_season_combined <-
   left_join(d_regular_raw,
             d_advanced_raw,
-            by = c("Player", "Pos", "Age", "Tm", "G",  "Season"))
+            by = c("Player", "Pos", "Age", "Team", "G",  "Season"))
 
 write.csv(d_season_combined, "season_combined.csv")
 

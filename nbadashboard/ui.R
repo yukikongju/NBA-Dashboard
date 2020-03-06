@@ -34,7 +34,7 @@ ui <- navbarPage(
                              varSelectInput(
                                  "leaderboard_statsInput",
                                  "Stats",
-                                 d_season_combined %>% select(-c(Player, Pos, Age, Tm, Season))
+                                 d_season_combined %>% select(-c(Player, Pos, Age, Team, Season))
                              )
                          )
                      ),
