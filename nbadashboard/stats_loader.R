@@ -13,6 +13,10 @@ library(parallel)
 library(janitor)
 library(jsonlite)
 
+# ------------------------- remove conflict ------------------------------------------
+
+conflict_prefer("rename", "dplyr")
+
 
 # ----------------------------- Player stats by season -----------------------------------
 
@@ -39,7 +43,8 @@ getStats <-  function(url, season) {
     select(-c(Rk)) %>%
     distinct(Player, .keep_all = TRUE) %>%
     filter(!Player == "Player") %>%
-    mutate_all(na_if, "")
+    mutate_all(na_if, "") %>% 
+    
   
   iteration = parent.frame()$i[]
   
@@ -53,7 +58,7 @@ getStats <-  function(url, season) {
 d_regular_raw <-
   mclapply(urls_regular_stats, getStats, seasons) %>%
   bind_rows() %>%
-  dplyr::rename(MPG = MP)
+  dplyr:: rename(MPG = MP)
 
 d_advanced_raw <-
   mclapply(urls_advanced_stats, getStats,  seasons) %>% bind_rows()

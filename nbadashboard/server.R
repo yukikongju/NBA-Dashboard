@@ -29,16 +29,13 @@ server <- function(input, output) {
             arrange(desc(!!!stats())) %>% 
             top_n(100)
         
-        
-    })
-    
-    
+    }, include.rownames=TRUE)
     
     output$leaderboard_plot <- renderPlot({
         
     })
     
-    
+    stats_names <- d_season_combined %>% select(-c(Player, Pos, Age, Tm, Season))
     
     
     # ------------ Player evolution ------------------
@@ -52,16 +49,36 @@ server <- function(input, output) {
         input$search_player
     })
     
-    output$stats_table <- renderTable({
-        d_season_combined %>% 
+    output$stats_table_regular <- renderTable({
+        d_regular_raw %>% 
             filter(Player==player()) %>% 
             select(-c(Player, Age, Pos)) %>% 
-            arrange(desc(Season)) 
+            arrange(desc(Season)) %>% 
+            select(Season, everything())
     })
+    
+    output$stats_table_advanced <- renderTable({
+        d_advanced_raw %>% 
+            filter(Player==player()) %>% 
+            select(-c(Player, Age, Pos)) %>% 
+            arrange(desc(Season)) %>% 
+            select(Season, everything())
+    })
+    
     
     output$player_team <- renderText({
         team=(d_season_combined %>% filter(Player==player()) %>% select(Tm))[1,]
         paste("Team : ", team )
+    })
+    
+    output$player_age <- renderText({
+        age=(d_season_combined %>% filter(Player==player()) %>% select(Age))[1,]
+        paste("Age : ", age )
+    })
+    
+    output$player_pos <- renderText({
+        position=(d_season_combined %>% filter(Player==player()) %>% select(Pos))[1,]
+        paste("Position : ", position )
     })
     
     output$evolution_plot <- renderPlot({

@@ -54,10 +54,18 @@ ui <- navbarPage(
                  fluidRow(column(
                      6,
                      fluidRow(imageOutput("player_image")),
-                     fluidRow(textOutput("player_team"))
+                     fluidRow(textOutput("player_team")),
+                     fluidRow(textOutput("player_age")),
+                     fluidRow(textOutput("player_pos"))
+                     
                  ),
                  column(6, plotOutput("evolution_plot"))),
-                 fluidRow(column(12, tableOutput("stats_table")))
+                 fluidRow(
+                     tabsetPanel(type="tabs",
+                        tabPanel("Regular Stats",tableOutput("stats_table_regular")),
+                        tabPanel("Advanced Metrics",tableOutput("stats_table_advanced"))
+                        )
+                 )
                  
              )),
     
