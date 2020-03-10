@@ -35,12 +35,14 @@ ui <- navbarPage(
                                  "leaderboard_statsInput",
                                  "Stats",
                                  d_season_combined %>% select(-c(Player, Pos, Age, Team, Season))
-                             )
+                                 
+                                 
+                                     )
                          )
                      ),
                      fluidRow(plotOutput("leaderboard_plot")),
                      )
-                 )
+                 ), fluidRow(verbatimTextOutput("leaderboard_summary"))
              )),
     
     # ------------ Player evolution ------------------
@@ -70,5 +72,39 @@ ui <- navbarPage(
              )),
     
     # ---------------- Comparing Player ----------------------
-    tabPanel("Comparing Player",)
+    tabPanel("Comparing Player",),
+    
+    # --------------- Player Screener ----------------
+    
+    tabPanel("Player Screener",
+            fluidPage(
+                titlePanel("Player Screener"),
+                sidebarLayout(
+                sidebarPanel(),
+                mainPanel()
+                )
+            ) ),
+    # ----------------------------- View DataSet -------------------
+    
+    tabPanel("View Dataset",
+             fluidPage(
+                 titlePanel("View Dataset"),
+                 sidebarLayout(
+                     sidebarPanel(
+                         selectInput("select_dataset",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries"), selected = "players"),
+                         
+                         uiOutput("dataset_columns"),
+                         uiOutput("dataset_seasons"),
+                         sliderInput("dataset_bins_slider", label = "3. Select a bins number to make the histogram", min=5, max=25, value = 15)
+                     ),
+                     mainPanel(
+                         tabsetPanel(type="tab",
+                            tabPanel("Histogram", 
+                                     plotOutput("dataset_histogram"),
+                                     downloadButton("dataset_download_plot", label = "Download Plot")),
+                            tabPanel("Summary",
+                                     downloadButton("dataset_download_summary",label = "Download Summary" )))
+                     )
+                 )
+             ))
 )
