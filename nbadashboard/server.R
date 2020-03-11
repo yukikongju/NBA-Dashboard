@@ -1,5 +1,6 @@
 
 
+
 # ----------------- Dependencies ----------------
 library(shiny)
 library(ggplot2)
@@ -27,24 +28,48 @@ conflict_prefer("filter", "dplyr")
 server <- function(input, output, session) {
     # ---------------- Leaderboard --------------
     
-    stats <- reactive({
+    leaderboardDatasetInput <- reactive({
+        switch(
+            input$leaderboard_dataset_input,
+            "players" = d_season_combined,
+            "teams" = d_team_regular_raw,
+            "drafts" = d_draft
+        )
+    })
+    
+    leaderboardSeasonChoices <- reactive({
+        levels(leaderboardDatasetInput()$Season)
+    })
+    
+    leaderboardStatsChoices <- reactive({
+        leaderboardDatasetInput() %>% 
+            select_if(is.numeric) %>% 
+            colnames()
+    })
+    
+    output$leaderboard_season_choices <- renderUI({
+        selectInput("leaderboard_seasonInput", "2. Select a Season", choices = leaderboardSeasonChoices())
+    })
+    
+    output$leaderboard_stats_choices<- renderUI({
+        selectInput("leaderboard_statsInput", "3. Select a Stats", choices = leaderboardStatsChoices())
+    })
+   
+    leaderboardStatsChosen <- reactive({
         input$leaderboard_statsInput
     })
     
-    season <- reactive({
+    leaderboardSeasonChosen <- reactive({
         input$leaderboard_seasonInput
     })
     
     output$leaderboard_table <- renderTable({
-        print(input$leaderboard_seasonInput)
-        print(input$leaderboard_statsInput)
-        
-        d_season_combined %>%
-            select(Player, Team,!!!stats()) %>%
-            # filter(Season==!!season()) %>%
-            arrange(desc(!!!stats())) %>%
+         leaderboardDatasetInput() %>%  
+           filter(Season==leaderboardSeasonChosen()) %>% 
+           select(Player, Team, leaderboardStatsChosen()) %>% 
+            dplyr::arrange(desc(get(leaderboardStatsChosen()))) %>% 
             top_n(100)
-        
+            
     }, include.rownames = TRUE)
     
     output$leaderboard_plot <- renderPlot({
@@ -52,15 +77,8 @@ server <- function(input, output, session) {
     })
     
     output$leaderboard_summary <- renderPrint({
-        d_season_combined %>% select(!!!stats()) %>% as.factor() %>% summary()
-    })
+          })
     
-    
-    
-    stats_names <-
-        d_season_combined %>% select(-c(Player, Pos, Age, Team, Season))
-    
-    # season_levels <- d_season_combined %>% select(Season)
     
     # ------------ Player evolution ------------------
     
@@ -91,17 +109,17 @@ server <- function(input, output, session) {
     
     
     output$player_team <- renderText({
-        team = (d_season_combined %>% filter(Player == player()) %>% select(Team))[1, ]
+        team = (d_season_combined %>% filter(Player == player()) %>% select(Team))[1,]
         paste("Team : ", team)
     })
     
     output$player_age <- renderText({
-        age = (d_season_combined %>% filter(Player == player()) %>% select(Age))[1, ]
+        age = (d_season_combined %>% filter(Player == player()) %>% select(Age))[1,]
         paste("Age : ", age)
     })
     
     output$player_pos <- renderText({
-        position = (d_season_combined %>% filter(Player == player()) %>% select(Pos))[1, ]
+        position = (d_season_combined %>% filter(Player == player()) %>% select(Pos))[1,]
         paste("Position : ", position)
     })
     
@@ -115,10 +133,12 @@ server <- function(input, output, session) {
     # ---------------- Screener ---------------
     
     screenerInput <- reactive({
-        switch(input$screener_dataset_input,
-               "players" = d_season_combined,
-               "teams"= d_team_regular_raw,
-               "drafts"=d_draft)
+        switch(
+            input$screener_dataset_input,
+            "players" = d_season_combined,
+            "teams" = d_team_regular_raw,
+            "drafts" = d_draft
+        )
     })
     
     screenerColumnNames <- reactive({
@@ -155,7 +175,7 @@ server <- function(input, output, session) {
     
     screenerInputVariable1 <- reactive({
         input$screener_v1
-    }) 
+    })
     
     screenerInputVariable2 <- reactive({
         input$screener_v2
@@ -186,38 +206,48 @@ server <- function(input, output, session) {
     })
     
     output$screener_table <- DT::renderDataTable({
-        screenerInput() %>% 
-            filter(Season == screenerSeasonInput(),
-                   get(screenerInputVariable1())>=screenerInputValue1(),
-                   get(screenerInputVariable2())>=screenerInputValue2(),
-                   get(screenerInputVariable3())>=screenerInputValue3(),
-                   get(screenerInputVariable4())>=screenerInputValue4()) %>%
-            select(-Season)  
-
+        screenerInput() %>%
+            filter(
+                Season == screenerSeasonInput(),
+                get(screenerInputVariable1()) >= screenerInputValue1(),
+                get(screenerInputVariable2()) >= screenerInputValue2(),
+                get(screenerInputVariable3()) >= screenerInputValue3(),
+                get(screenerInputVariable4()) >= screenerInputValue4()
+            ) %>%
+            select(-Season)
+        
     })
     
     # ------------- View Dataset ---------------------
     
     datasetInput <- reactive({
-        switch(input$select_dataset,
-               "players" = d_season_combined, 
-               "teams"= d_team_regular_raw,
-               "drafts"=d_draft)
+        switch(
+            input$select_dataset,
+            "players" = d_season_combined,
+            "teams" = d_team_regular_raw,
+            "drafts" = d_draft
+        )
     })
     
     numeric_columns <- reactive({
         datasetInput() %>%
             # select(-c(Player, Season, Team, Pos)) %>%
-            select_if(is.numeric) %>% 
+            select_if(is.numeric) %>%
             names()
     })
     
     output$dataset_columns_x <- renderUI({
-        selectInput("dataset_variable_x", "3. Select a variable in X-axis", choices = numeric_columns())
+        selectInput("dataset_variable_x",
+                    "3. Select a variable in X-axis",
+                    choices = numeric_columns())
     })
     
     output$dataset_columns_y <- renderUI({
-        selectInput("dataset_variable_y", "4. Select a variable in Y-Axis to make the scatterplot", choices = numeric_columns())
+        selectInput(
+            "dataset_variable_y",
+            "4. Select a variable in Y-Axis to make the scatterplot",
+            choices = numeric_columns()
+        )
     })
     
     season_level <- reactive({
@@ -248,53 +278,72 @@ server <- function(input, output, session) {
     
     p_histogram <- reactive({
         datasetInput() %>%
-            filter(Season==seasonInput()) %>%
+            filter(Season == seasonInput()) %>%
             ggplot(aes(x = get(variableInputX()))) +
-            geom_histogram(bins = binsInput(), fill="#69b3a2", color="#e9ecef", alpha=0.8) +
+            geom_histogram(
+                bins = binsInput(),
+                fill = "#69b3a2",
+                color = "#e9ecef",
+                alpha = 0.8
+            ) +
             xlab(toString(variableInputX())) +
-            ggtitle(paste0("Histogram of ", variableInputX(), " in ", seasonInput())) 
+            ggtitle(paste0("Histogram of ", variableInputX(), " in ", seasonInput()))
     })
     
     output$dataset_histogram <- renderPlot({
-      p_histogram()
+        p_histogram()
     })
     
     scatterplot_text_label <- reactive({
-       text <-  switch(datasetInput(),
-               "players"= Player,
-               "teams"= Team,
-               "draft"= Player)
-      
+        text <-  switch(
+            datasetInput(),
+            "players" = Player,
+            "teams" = Team,
+            "draft" = Player
+        )
+        
     })
     
     p_scatterplot <- reactive({
         datasetInput() %>%
-            filter(Season==seasonInput()) %>%
-            ggplot(aes( x=get(variableInputX()), y=get(variableInputY())))+
-            geom_point( aes(text=Player),alpha=0.6, color="#69b3a2") +
-            geom_smooth(method=lm, se=TRUE)+
-            xlab(variableInputX())+
-            ylab(variableInputY())+
-            ggtitle(paste0("The relationship between ",variableInputX(), " and ", variableInputY(), " in ", seasonInput()))
+            filter(Season == seasonInput()) %>%
+            ggplot(aes(
+                x = get(variableInputX()),
+                y = get(variableInputY())
+            )) +
+            geom_point(aes(text = Player), alpha = 0.6, color = "#69b3a2") +
+            geom_smooth(method = lm, se = TRUE) +
+            xlab(variableInputX()) +
+            ylab(variableInputY()) +
+            ggtitle(
+                paste0(
+                    "The relationship between ",
+                    variableInputX(),
+                    " and ",
+                    variableInputY(),
+                    " in ",
+                    seasonInput()
+                )
+            )
     })
     
     output$dataset_scatterplot <- renderPlotly({
-       ggplotly(p_scatterplot()) %>% 
-           config(displayModeBar=FALSE)
+        ggplotly(p_scatterplot()) %>%
+            config(displayModeBar = FALSE)
         
     })
     
     dataset_scatterplot_lm <- reactive({
         datasetInput() %>%
-            filter(Season==seasonInput()) %>% 
+            filter(Season == seasonInput()) %>%
             lm(get(variableInputY()) ~ get(variableInputX()), .)
     })
     
     output$dataset_scatterplot_summary <-  renderText({
         lm <-  dataset_scatterplot_lm()
-       print(summary(lm))
+        print(summary(lm))
     })
-   
+    
     
     output$dataset_summary <- renderTable({
         # ds <- datasetInput() %>%
@@ -307,10 +356,14 @@ server <- function(input, output, session) {
     })
     
     output$dataset_download_hist <- downloadHandler(
-        filename = function(){
-            paste0(get(datasetInput()), "histogram", variableInputX(), sep="_")},
-        content=function(file){
-            if(input$dataset_export_img=="png"){
+        filename = function() {
+            paste0(get(datasetInput()),
+                   "histogram",
+                   variableInputX(),
+                   sep = "_")
+        },
+        content = function(file) {
+            if (input$dataset_export_img == "png") {
                 png(file)
             } else{
                 pdf(file)
@@ -321,23 +374,21 @@ server <- function(input, output, session) {
     )
     
     output$dataset_download_dataset <- downloadHandler(
-        filename = function(){
+        filename = function() {
             paste(get(datasetInput()))
-        }, content = function(file){
-            sep <- switch( input$dataset_export_table,
-                           "csv"=",", "txt"=";")
+        },
+        content = function(file) {
+            sep <- switch(input$dataset_export_table,
+                          "csv" = ",",
+                          "txt" = ";")
             write.table(datasetInput(), file, sep = sep)
         }
     )
     
-    
-    
-    
-    
     output$dataset_rawdata <- DT::renderDataTable({
-        datasetInput() %>% 
-            filter(Season==seasonInput()) %>% 
-            select(-Season)  
-            # select(Player,get(variableInputX()), get(variableInputY()), everything())
+        datasetInput() %>%
+            filter(Season == seasonInput()) %>%
+            select(-Season)
+        # select(Player,get(variableInputX()), get(variableInputY()), everything())
     })
 }
