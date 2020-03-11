@@ -99,11 +99,71 @@ d_season_combined$Player <- as.character(d_season_combined$Player)
 
 
 
+
+# ------------------------------- Team Stats ------------------------------------
+
+urls_team_stats <-
+  paste0("https://www.basketball-reference.com/leagues/NBA_",
+         seasons,
+         ".html")
+
+# regular stats by conference
+
+f_getTeamStats <- function(url, season){
+  
+  d_team_standing_raw <- url %>%
+    read_html() %>%
+    html_nodes("table") %>%
+    html_table() 
+  
+  d_teams_west <- d_team_standing_raw[2] %>%
+    bind_rows() %>% 
+    mutate(Conference="Western")  %>% 
+    rename(Team="Western Conference")
+  
+  d_teams_east <- d_team_standing_raw[1] %>%
+    bind_rows() %>% 
+    mutate(Conference="Eastern")  %>% 
+    rename(Team="Eastern Conference") 
+  
+  d_teams_combined <- union(d_teams_east, d_teams_west) 
+  
+  ## remove numb at the end of team 
+  
+  iteration = parent.frame()$i[]
+  
+  season = paste0((seasons[iteration] - 1), "-", seasons[iteration])
+  
+  d_teams_combined %>%
+    mutate(Season = as.factor(season), Conference=as.factor(Conference))
+  
+}
+
+d_team_regular_raw <-
+  mclapply(urls_team_stats, f_getTeamStats, seasons) %>% 
+  bind_rows()
+
+
+
+
+# regular stats by division
+d_teams_division <- d_team_standing_raw[3] %>% 
+  bind_cols()
+
+# advanced stats
+
+# d_team_advanced_raw <- "https://www.basketball-reference.com/leagues/NBA_2019.html" %>%
+#   read_html() %>%
+#   html_nodes(".right , .left , .center") %>%
+#   html_text()
+
+
+
 # ------------------------------ Player salaries ----------------------------------------
 
 
 
-# ---------------------------------- League average----------------------------
+# ---------------------------------- League average (Players) ----------------------------
 
 d_league_average <- d_season_combined %>%
   select(-c(Player, Team, Pos, Season)) %>%
