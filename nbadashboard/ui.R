@@ -113,6 +113,7 @@ ui <- navbarPage(
                                      downloadButton("dataset_download_hist", label = "Download Histogram")),
                             tabPanel("Scatter Plot",
                                      plotlyOutput("dataset_scatterplot"),
+                                     tableOutput("dataset_scatterplot_summary"),
                                      downloadButton("dataset_download_scatplot", label = "Download Scatterplot")),
                             tabPanel("Summary",
                                      tableOutput("dataset_summary"),

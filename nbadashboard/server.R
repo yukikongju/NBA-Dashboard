@@ -217,14 +217,28 @@ server <- function(input, output, session) {
     })
     
     output$dataset_scatterplot <- renderPlotly({
-       scat <-  datasetInput() %>% 
-            filter(Season==seasonInput()) %>% 
-            ggplot(aes(text=Player, get(variableInputX()), get(variableInputY())))+
-            geom_point( alpha=0.6, color="#69b3a2") +
+       scat <-  datasetInput() %>%
+            filter(Season==seasonInput()) %>%
+            ggplot(aes( x=get(variableInputX()), y=get(variableInputY())))+
+            geom_point( aes(text=Player),alpha=0.6, color="#69b3a2") +
+             geom_smooth(method=lm, se=TRUE)+
             xlab(variableInputX())+
             ylab(variableInputY())+
            ggtitle(paste0("The relationship between ",variableInputX(), " and ", variableInputY(), " in ", seasonInput()))
-       ggplotly(scat)
+       ggplotly(scat) %>% 
+           config(displayModeBar=FALSE)
+        
+    })
+    
+    dataset_scatterplot_lm <- reactive({
+        datasetInput() %>%
+            filter(Season==seasonInput()) %>% 
+            lm(get(variableInputY()) ~ get(variableInputX()), .)
+    })
+    
+    output$dataset_scatterplot_summary <-  renderTable({
+        # lm <- dataset_scatterplot_lm()
+        # print(summary(lm))
     })
    
     
