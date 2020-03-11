@@ -156,19 +156,21 @@ server <- function(input, output, session) {
             filter(Season == "2018-2019") %>%
             select(-Season)  
             
-            
     })
     
     # ------------- View Dataset ---------------------
     
     datasetInput <- reactive({
         switch(input$select_dataset,
-               "players" = d_season_combined)
+               "players" = d_season_combined, 
+               "teams"= d_team_regular_raw,
+               "draft"=d_draft)
     })
     
     numeric_columns <- reactive({
         datasetInput() %>%
-            select(-c(Player, Season, Team, Pos)) %>%
+            # select(-c(Player, Season, Team, Pos)) %>%
+            select_if(is.numeric) %>% 
             names()
     })
     
@@ -213,6 +215,14 @@ server <- function(input, output, session) {
              geom_histogram(bins = binsInput(), fill="#69b3a2", color="#e9ecef", alpha=0.8) +
              xlab(toString(variableInputX())) +
             ggtitle(paste0("Histogram of ", variableInputX(), " in ", seasonInput())) 
+    })
+    
+    scatterplot_text_label <- reactive({
+       text <-  switch(datasetInput(),
+               "players"= Player,
+               "teams"= Team,
+               "draft"= Player)
+      
     })
     
     output$dataset_scatterplot <- renderPlotly({

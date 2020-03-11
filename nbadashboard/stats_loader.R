@@ -144,7 +144,7 @@ d_team_regular_raw <-
   mclapply(urls_team_stats, f_getTeamStats, seasons) %>%
   bind_rows()
 
-
+d_team_regular_raw$Season <- as.factor(d_team_regular_raw$Season)
 
 
 # regular stats by division
@@ -162,6 +162,12 @@ d_teams_division <- d_team_standing_raw[3] %>%
 
 # ------------------------------ Player salaries ----------------------------------------
 
+ url_salaries <- "https://www.lineups.com/nba/player-stats/stephen-curry"
+
+d_salaries <- url_salaries %>% 
+  read_html() %>% 
+  html_nodes(".player-stats") %>% 
+  html_text()
 
 
 # ---------------------------------- League average (Players) ----------------------------

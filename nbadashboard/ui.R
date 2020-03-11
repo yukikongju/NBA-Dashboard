@@ -114,7 +114,7 @@ ui <- navbarPage(
                  titlePanel("View Dataset"),
                  sidebarLayout(
                      sidebarPanel(
-                         selectInput("select_dataset",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries"), selected = "players"),
+                         selectInput("select_dataset",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries", "Draft"="draft"), selected = "players"),
                          uiOutput("dataset_seasons"),
                          uiOutput("dataset_columns_x"),
                          uiOutput("dataset_columns_y"),
@@ -132,6 +132,8 @@ ui <- navbarPage(
                             tabPanel("Summary",
                                      tableOutput("dataset_summary"),
                                      downloadButton("dataset_download_summary",label = "Download Summary" )),
+                            tabPanel("Facets",
+                                     ),
                             tabPanel("Raw Data",
                                     DT:: dataTableOutput("dataset_rawdata")
                                     ))
