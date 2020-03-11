@@ -8,6 +8,7 @@
 # ----------------- Dependencies ----------------
 library(shiny)
 library(ggplot2)
+library(ggExtra)
 library(dplyr)
 library(plotly)
 library(conflicted)
@@ -192,8 +193,13 @@ server <- function(input, output, session) {
         input$dataset_bins_slider
     })
     
-    variableInput <- reactive({
+    variableInputX <- reactive({
         input$dataset_variable_x
+        
+    })
+    
+    variableInputY <- reactive({
+        input$dataset_variable_y
         
     })
     
@@ -204,12 +210,22 @@ server <- function(input, output, session) {
     output$dataset_histogram <- renderPlot({
        datasetInput() %>%
              filter(Season==seasonInput()) %>%
-             ggplot(aes(x = get(variableInput()))) +
+             ggplot(aes(x = get(variableInputX()))) +
              geom_histogram(bins = binsInput(), fill="#69b3a2", color="#e9ecef", alpha=0.8) +
-             xlab(toString(variableInput())) +
-            ggtitle(paste0("Histogram of ", variableInput(), " in ", seasonInput())) 
+             xlab(toString(variableInputX())) +
+            ggtitle(paste0("Histogram of ", variableInputX(), " in ", seasonInput())) 
     })
     
+    output$dataset_scatterplot <- renderPlotly({
+       scat <-  datasetInput() %>% 
+            filter(Season==seasonInput()) %>% 
+            ggplot(aes(text=Player, get(variableInputX()), get(variableInputY())))+
+            geom_point( alpha=0.6, color="#69b3a2") +
+            xlab(variableInputX())+
+            ylab(variableInputY())+
+           ggtitle(paste0("The relationship between ",variableInputX(), " and ", variableInputY(), " in ", seasonInput()))
+       ggplotly(scat)
+    })
    
     
     output$dataset_summary <- renderTable({
