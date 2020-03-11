@@ -59,18 +59,22 @@ server <- function(input, output, session) {
         input$leaderboard_statsInput
     })
     
+    leaderboardTopSliderChosen <- reactive({
+        input$leaderboard_slider
+    })
+    
     leaderboardSeasonChosen <- reactive({
         input$leaderboard_seasonInput
     })
     
-    output$leaderboard_table <- renderTable({
+    output$leaderboard_table <- DT:: renderDataTable({
          leaderboardDatasetInput() %>%  
            filter(Season==leaderboardSeasonChosen()) %>% 
            select(Player, Team, leaderboardStatsChosen()) %>% 
             dplyr::arrange(desc(get(leaderboardStatsChosen()))) %>% 
-            top_n(100)
+            top_n(leaderboardTopSliderChosen())
             
-    }, include.rownames = TRUE)
+    })
     
     output$leaderboard_plot <- renderPlot({
         

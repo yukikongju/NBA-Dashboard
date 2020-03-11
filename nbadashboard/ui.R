@@ -45,10 +45,11 @@ ui <- navbarPage(
             column(4,
                    uiOutput("leaderboard_stats_choices"))
         ),
+        sliderInput("leaderboard_slider", min = 10, max=50, label = "Top :", value = 20)
        ),
        fluidRow(
            splitLayout(
-               tableOutput("leaderboard_table"),
+              DT:: dataTableOutput("leaderboard_table"),
                plotOutput("leaderboard_plot")
            )
        )
