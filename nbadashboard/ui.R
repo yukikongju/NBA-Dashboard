@@ -92,11 +92,18 @@ ui <- navbarPage(
                     ),
                     fluidRow(
                         column(3, uiOutput("screener_var1")),
-                        column(3, uiOutput("screener_var2")),
+                        column(3, numericInput("screener_value1", value = 0, label = "")),
                         column(3, uiOutput("screener_var3")),
-                        column(3, uiOutput("screener_var4"))
-                    )
+                        column(3, numericInput("screener_value3",value = 0, label = ""))
+                        
+                    ),
                     
+                    fluidRow(
+                        column(3, uiOutput("screener_var2")),
+                        column(3, numericInput("screener_value2",value = 0, label = "")),
+                        column(3, uiOutput("screener_var4")),
+                        column(3, numericInput("screener_value4", value = 0, label = ""))
+                    )
                 ), DT:: dataTableOutput("screener_table")
             ) 
         ),

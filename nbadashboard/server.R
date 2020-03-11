@@ -151,9 +151,12 @@ server <- function(input, output, session) {
         selectInput("screener_v4", " Select a variable", choices = screenerColumnNames())
     })
     
-    
     output$screener_table <- DT::renderDataTable({
-        d_season_combined %>% filter(Season == "2018-2019") %>% select(-Season)
+        d_season_combined %>% 
+            filter(Season == "2018-2019") %>%
+            select(-Season)  
+            
+            
     })
     
     # ------------- View Dataset ---------------------
