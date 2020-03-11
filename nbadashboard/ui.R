@@ -85,7 +85,7 @@ ui <- navbarPage(
                 wellPanel(
                     fluidRow(
                         column(6,
-                               selectInput("screener_dataset_input",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries"), selected = "players"),
+                               selectInput("screener_dataset_input",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Draft"="drafts", "Salaries"="salaries"), selected = "players"),
                                ),
                         column(6,
                                uiOutput("screener_season"))
@@ -114,7 +114,7 @@ ui <- navbarPage(
                  titlePanel("View Dataset"),
                  sidebarLayout(
                      sidebarPanel(
-                         selectInput("select_dataset",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries", "Draft"="draft"), selected = "players"),
+                         selectInput("select_dataset",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries", "Draft"="drafts"), selected = "players"),
                          uiOutput("dataset_seasons"),
                          uiOutput("dataset_columns_x"),
                          uiOutput("dataset_columns_y"),

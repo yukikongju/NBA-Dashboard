@@ -115,13 +115,15 @@ server <- function(input, output, session) {
     # ---------------- Screener ---------------
     
     screenerInput <- reactive({
-        switch(input$select_dataset,
-               "players" = d_season_combined)
+        switch(input$screener_dataset_input,
+               "players" = d_season_combined,
+               "teams"= d_team_regular_raw,
+               "drafts"=d_draft )
     })
     
     screenerColumnNames <- reactive({
-        datasetInput() %>%
-            select(-Player) %>%
+        screenerInput() %>%
+            select_if(is.numeric) %>%
             names()
     })
     
@@ -132,7 +134,6 @@ server <- function(input, output, session) {
     output$screener_season <- renderUI({
         selectInput("screener_season", " 2. Select a season",
                     choices = screener_season_level())
-        
     })
     
     output$screener_var1 <- renderUI({
@@ -164,7 +165,7 @@ server <- function(input, output, session) {
         switch(input$select_dataset,
                "players" = d_season_combined, 
                "teams"= d_team_regular_raw,
-               "draft"=d_draft)
+               "drafts"=d_draft)
     })
     
     numeric_columns <- reactive({
@@ -175,11 +176,11 @@ server <- function(input, output, session) {
     })
     
     output$dataset_columns_x <- renderUI({
-        selectInput("dataset_variable_x", "3. Select a variable in x", choices = numeric_columns())
+        selectInput("dataset_variable_x", "3. Select a variable in X-axis", choices = numeric_columns())
     })
     
     output$dataset_columns_y <- renderUI({
-        selectInput("dataset_variable_y", "4. Select a variable in y", choices = numeric_columns())
+        selectInput("dataset_variable_y", "4. Select a variable in Y-Axis to make the scatterplot", choices = numeric_columns())
     })
     
     season_level <- reactive({
