@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 # ----------------- Dependencies ----------------
 library(shiny)
 library(ggplot2)
@@ -12,14 +7,13 @@ library(ggExtra)
 library(dplyr)
 library(plotly)
 library(conflicted)
-# library(DT)
+
 
 # -------------- remove conflict ----------------
 
 conflict_prefer("arrange", "dplyr")
 conflict_prefer("summarise", "dplyr")
 conflict_prefer("filter", "dplyr")
-# conflict_prefer("dataTableOutput", "DT")
 
 # --------------- Abreviations ------------------
 

@@ -3,7 +3,7 @@
 
 library(shiny)
 library(dplyr)
-# library(DT)
+
 
 # ------------------- Import data ----------------------
 
@@ -11,7 +11,6 @@ library(dplyr)
 d_season_combined <- d_season_combined
 
 #  ------------------ conflicts ----------------
-# conflict_prefer("dataTableOutput", "DT")
 
 
 # ------------------- UI ----------------------------
@@ -83,20 +82,24 @@ ui <- navbarPage(
     tabPanel(" Screener",
             fluidPage(
                 titlePanel("Screener"),
-                sidebarLayout(
-                sidebarPanel(
-                    selectInput("screener_dataset_input",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries"), selected = "players"),
-                    uiOutput("screener_season"),
-                    uiOutput("screener_var1"),
-                    uiOutput("screener_var2"),
-                    uiOutput("screener_var3"),
-                    uiOutput("screener_var4")
-                ),
-                mainPanel(
-                   DT:: dataTableOutput("screener_table")
-                )
-                )
-            ) ),
+                wellPanel(
+                    fluidRow(
+                        column(6,
+                               selectInput("screener_dataset_input",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries"), selected = "players"),
+                               ),
+                        column(6,
+                               uiOutput("screener_season"))
+                    ),
+                    fluidRow(
+                        column(3, uiOutput("screener_var1")),
+                        column(3, uiOutput("screener_var2")),
+                        column(3, uiOutput("screener_var3")),
+                        column(3, uiOutput("screener_var4"))
+                    )
+                    
+                ), DT:: dataTableOutput("screener_table")
+            ) 
+        ),
     # ----------------------------- View DataSet -------------------
     
     tabPanel("View Dataset",
