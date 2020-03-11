@@ -2,6 +2,7 @@
 
 
 
+
 #---------------------------- Dependencies -------------------------------------------
 
 library(rvest)
@@ -109,45 +110,45 @@ urls_team_stats <-
 
 # regular stats by conference
 
-f_getTeamStats <- function(url, season){
-  
+f_getTeamStats <- function(url, season) {
   d_team_standing_raw <- url %>%
     read_html() %>%
     html_nodes("table") %>%
-    html_table() 
+    html_table()
   
   d_teams_west <- d_team_standing_raw[2] %>%
-    bind_rows() %>% 
-    mutate(Conference="Western")  %>% 
-    rename(Team="Western Conference")
+    bind_rows() %>%
+    mutate(Conference = "Western")  %>%
+    rename(Team = "Western Conference")
   
   d_teams_east <- d_team_standing_raw[1] %>%
-    bind_rows() %>% 
-    mutate(Conference="Eastern")  %>% 
-    rename(Team="Eastern Conference") 
+    bind_rows() %>%
+    mutate(Conference = "Eastern")  %>%
+    rename(Team = "Eastern Conference")
   
-  d_teams_combined <- union(d_teams_east, d_teams_west) 
+  d_teams_combined <- union(d_teams_east, d_teams_west)
   
-  ## remove numb at the end of team 
+  ## remove numb at the end of team
   
   iteration = parent.frame()$i[]
   
   season = paste0((seasons[iteration] - 1), "-", seasons[iteration])
   
   d_teams_combined %>%
-    mutate(Season = as.factor(season), Conference=as.factor(Conference))
+    mutate(Season = as.factor(season),
+           Conference = as.factor(Conference))
   
 }
 
 d_team_regular_raw <-
-  mclapply(urls_team_stats, f_getTeamStats, seasons) %>% 
+  mclapply(urls_team_stats, f_getTeamStats, seasons) %>%
   bind_rows()
 
 
 
 
 # regular stats by division
-d_teams_division <- d_team_standing_raw[3] %>% 
+d_teams_division <- d_team_standing_raw[3] %>%
   bind_cols()
 
 # advanced stats
@@ -181,28 +182,65 @@ column_names <- d_season_combined  %>%
   select(-c(Player, Pos, Season, Team)) %>%
   colnames()
 
-d_residuals <- lapply(d_season_combined[column_names], function(i) y-d_league_average[i]) %>% bind_rows()
-lapply(d_season_combined[column_names], function(i) x-mean(x)) %>% bind_rows()
+d_residuals <-
+  lapply(d_season_combined[column_names], function(i)
+    y - d_league_average[i]) %>% bind_rows()
+lapply(d_season_combined[column_names], function(i)
+  x - mean(x)) %>% bind_rows()
 
-d_season_combined %>% 
+d_season_combined %>%
   select(-c(Player, Pos, Season, Team)) %>%
-  mutate_all(function(i) x-mean(x))
+  mutate_all(function(i)
+    x - mean(x))
 
-f_diff_mean <- function(i) x-mean(x)
+f_diff_mean <- function(i)
+  x - mean(x)
 
-d_residuals <- d_season_combined %>% 
-  select(-c( Pos, Team)) %>%
-  group_by(Season, Player) %>% 
-  summarise_all(function(i)d_league_average[i])
+d_residuals <- d_season_combined %>%
+  select(-c(Pos, Team)) %>%
+  group_by(Season, Player) %>%
+  summarise_all(function(i)
+    d_league_average[i])
 
-#  j-------------------
+#  ----------------- residual for a single column --------
 
-d_season_combined %>% 
-  select(PTS) %>% 
-  lapply(function(i)i-d_league_average$PTS) %>% head()
+d_season_combined %>%
+  select(PTS) %>%
+  lapply(function(i)
+    i - d_league_average$PTS) %>% head()
 
+# ------------------------ NBA Draft ---------------------
 
+urls_drafts <-
+  paste0("https://www.basketball-reference.com/draft/NBA_",
+         seasons,
+         ".html")
 
+f_getDraft <- function(url, season) {
+  d_draft_raw <-
+    url %>%
+    read_html() %>%
+    html_nodes("table") %>%
+    html_table() %>%
+    bind_cols()
+  
+  colnames(d_draft_raw) <-  as.character(d_draft_raw[1, ])
+  
+  d_draft_raw <- d_draft_raw[-c(1, 32, 33), ]
+  d_draft_raw <- d_draft_raw[, -1]
+  d_draft_raw <- d_draft_raw %>%
+    rename(Pick = Pk,
+           Team = Tm,
+           Years = Yrs)
+  iteration = parent.frame()$i[]
+  
+  season = paste0((seasons[iteration] - 1), "-", seasons[iteration])
+  
+  d_draft_raw %>%
+    mutate(Season = as.factor(season))
+  
+}
 
+d_draft <- mclapply(urls_drafts, f_getDraft, seasons) %>% bind_rows()
 
 
