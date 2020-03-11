@@ -1,6 +1,7 @@
 
 
 
+
 #---------------------------- Dependencies -------------------------------------------
 
 library(rvest)
@@ -87,7 +88,7 @@ d_season_combined$Season <- as.factor(d_season_combined$Season)
 d_season_combined$Player <- as.factor(d_season_combined$Player)
 
 d_season_combined <- d_season_combined %>%
-  mutate_if(is.character, as.numeric) 
+  mutate_if(is.character, as.numeric)
 
 d_season_combined$Player <- as.character(d_season_combined$Player)
 
@@ -110,9 +111,38 @@ d_league_average <- d_season_combined %>%
   summarise_all(mean, na.rm = TRUE)
 
 # ----------------------------- residual around league average mean ---------------------
-#
-#  d_residuals <- d_season_combined %>%
-#    summarise_if()
+
+d_residuals <- d_season_combined %>%
+  select(c(Team, Player, Pos, Season))
+
+# x %>% mutate_at(vars(d_season_combined), funs(stringr::str_replace_all(., ",", "")))
+
+column_names <- d_season_combined  %>%
+  select(-c(Player, Pos, Season, Team)) %>%
+  colnames()
+
+d_residuals <- lapply(d_season_combined[column_names], function(i) y-d_league_average[i]) %>% bind_rows()
+lapply(d_season_combined[column_names], function(i) x-mean(x)) %>% bind_rows()
+
+d_season_combined %>% 
+  select(-c(Player, Pos, Season, Team)) %>%
+  mutate_all(function(i) x-mean(x))
+
+f_diff_mean <- function(i) x-mean(x)
+
+d_residuals <- d_season_combined %>% 
+  select(-c( Pos, Team)) %>%
+  group_by(Season, Player) %>% 
+  summarise_all(function(i)d_league_average[i])
+
+#  j-------------------
+
+d_season_combined %>% 
+  select(PTS) %>% 
+  lapply(function(i)i-d_league_average$PTS) %>% head()
 
 
-# -------------------
+
+
+
+
