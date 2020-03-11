@@ -249,4 +249,12 @@ f_getDraft <- function(url, season) {
 
 d_draft <- mclapply(urls_drafts, f_getDraft, seasons) %>% bind_rows()
 
+d_draft$Season <- as.factor(d_draft$Season)
+d_draft$Team <- as.factor(d_draft$Team)
+d_draft$College <- as.factor(d_draft$College)
+d_draft$Player <- as.factor(d_draft$Player)
 
+d_draft <- d_draft %>%
+  mutate_if(is.character, as.numeric)
+
+d_draft$Player <- as.character(d_draft$Player)

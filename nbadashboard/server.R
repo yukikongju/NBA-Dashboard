@@ -118,7 +118,7 @@ server <- function(input, output, session) {
         switch(input$screener_dataset_input,
                "players" = d_season_combined,
                "teams"= d_team_regular_raw,
-               "drafts"=d_draft )
+               "drafts"=d_draft)
     })
     
     screenerColumnNames <- reactive({
