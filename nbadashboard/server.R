@@ -12,12 +12,14 @@ library(ggExtra)
 library(dplyr)
 library(plotly)
 library(conflicted)
+# library(DT)
 
 # -------------- remove conflict ----------------
 
 conflict_prefer("arrange", "dplyr")
 conflict_prefer("summarise", "dplyr")
 conflict_prefer("filter", "dplyr")
+# conflict_prefer("dataTableOutput", "DT")
 
 # --------------- Abreviations ------------------
 
@@ -156,8 +158,8 @@ server <- function(input, output, session) {
     })
     
     
-    output$screener_table <- renderDataTable({
-        d_season_combined %>% filter(Season == "2018-2019")
+    output$screener_table <- DT::renderDataTable({
+        d_season_combined %>% filter(Season == "2018-2019") %>% select(-Season)
     })
     
     # ------------- View Dataset ---------------------
@@ -252,7 +254,10 @@ server <- function(input, output, session) {
         
     })
     
-    output$dataset_rawdata <- renderDataTable({
-        datasetInput()
+    output$dataset_rawdata <- DT::renderDataTable({
+        datasetInput() %>% 
+            filter(Season==seasonInput()) %>% 
+            select(-Season)  
+            # select(Player,get(variableInputX()), get(variableInputY()), everything())
     })
 }

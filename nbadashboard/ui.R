@@ -3,12 +3,16 @@
 
 library(shiny)
 library(dplyr)
-
+# library(DT)
 
 # ------------------- Import data ----------------------
 
 
 d_season_combined <- d_season_combined
+
+#  ------------------ conflicts ----------------
+# conflict_prefer("dataTableOutput", "DT")
+
 
 # ------------------- UI ----------------------------
 
@@ -89,7 +93,7 @@ ui <- navbarPage(
                     uiOutput("screener_var4")
                 ),
                 mainPanel(
-                    dataTableOutput("screener_table")
+                   DT:: dataTableOutput("screener_table")
                 )
                 )
             ) ),
@@ -119,7 +123,8 @@ ui <- navbarPage(
                                      tableOutput("dataset_summary"),
                                      downloadButton("dataset_download_summary",label = "Download Summary" )),
                             tabPanel("Raw Data",
-                                     dataTableOutput("dataset_rawdata")))
+                                    DT:: dataTableOutput("dataset_rawdata")
+                                    ))
                      )
                  )
              ))
