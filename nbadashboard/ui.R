@@ -118,7 +118,7 @@ ui <- navbarPage(
                          uiOutput("dataset_seasons"),
                          uiOutput("dataset_columns_x"),
                          uiOutput("dataset_columns_y"),
-                         sliderInput("dataset_bins_slider", label = "3. Select a bins number to make the histogram", min=5, max=25, value = 15)
+                         sliderInput("dataset_bins_slider", label = "5. Select a bins number to make the histogram", min=5, max=25, value = 15)
                      ),
                      mainPanel(
                          tabsetPanel(type="tab",
@@ -127,10 +127,10 @@ ui <- navbarPage(
                                      downloadButton("dataset_download_hist", label = "Download Histogram")),
                             tabPanel("Scatter Plot",
                                      plotlyOutput("dataset_scatterplot"),
-                                     tableOutput("dataset_scatterplot_summary"),
+                                     verbatimTextOutput("dataset_scatterplot_summary"),
                                      downloadButton("dataset_download_scatplot", label = "Download Scatterplot")),
                             tabPanel("Summary",
-                                     tableOutput("dataset_summary"),
+                                    tableOutput("dataset_summary"),
                                      downloadButton("dataset_download_summary",label = "Download Summary" )),
                             tabPanel("Facets",
                                      ),

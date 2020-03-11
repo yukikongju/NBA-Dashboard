@@ -136,6 +136,39 @@ server <- function(input, output, session) {
                     choices = screener_season_level())
     })
     
+    screenerSeasonInput <- reactive({
+        input$screener_season
+    })
+    
+    screenerInputValue1 <- reactive({
+        input$screener_value1
+    })
+    screenerInputValue2 <- reactive({
+        input$screener_value2
+    })
+    screenerInputValue3 <- reactive({
+        input$screener_value3
+    })
+    screenerInputValue4 <- reactive({
+        input$screener_value4
+    })
+    
+    screenerInputVariable1 <- reactive({
+        input$screener_v1
+    }) 
+    
+    screenerInputVariable2 <- reactive({
+        input$screener_v2
+    })
+    
+    screenerInputVariable3 <- reactive({
+        input$screener_v3
+    })
+    
+    screenerInputVariable4 <- reactive({
+        input$screener_v4
+    })
+    
     output$screener_var1 <- renderUI({
         selectInput("screener_v1", " Select a variable", choices = screenerColumnNames())
     })
@@ -153,10 +186,14 @@ server <- function(input, output, session) {
     })
     
     output$screener_table <- DT::renderDataTable({
-        d_season_combined %>% 
-            filter(Season == "2018-2019") %>%
+        screenerInput() %>% 
+            filter(Season == screenerSeasonInput(),
+                   get(screenerInputVariable1())>=screenerInputValue1(),
+                   get(screenerInputVariable2())>=screenerInputValue2(),
+                   get(screenerInputVariable3())>=screenerInputValue3(),
+                   get(screenerInputVariable4())>=screenerInputValue4()) %>%
             select(-Season)  
-            
+
     })
     
     # ------------- View Dataset ---------------------
@@ -246,9 +283,9 @@ server <- function(input, output, session) {
             lm(get(variableInputY()) ~ get(variableInputX()), .)
     })
     
-    output$dataset_scatterplot_summary <-  renderTable({
-        # lm <- dataset_scatterplot_lm()
-        # print(summary(lm))
+    output$dataset_scatterplot_summary <-  renderText({
+        lm <-  dataset_scatterplot_lm()
+       print(summary(lm))
     })
    
     
