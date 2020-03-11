@@ -19,10 +19,6 @@ conflict_prefer("filter", "dplyr")
 # --------------- Abreviations ------------------
 
 
-
-
-
-
 # ------------------ Server -----------------
 
 server <- function(input, output, session) {
@@ -36,6 +32,14 @@ server <- function(input, output, session) {
             "drafts" = d_draft
         )
     })
+    
+    leaderboardCharColumn <- reactive({
+        switch(
+            datasetInput(),
+            "players" = Player,
+            "teams" = Team,
+            "draft" = Player
+        )})
     
     leaderboardSeasonChoices <- reactive({
         levels(leaderboardDatasetInput()$Season)

@@ -34,7 +34,7 @@ ui <- navbarPage(
                         "Players Stats" = "players",
                         "Teams Stats" = "teams",
                         "Salaries" = "salaries",
-                        "Draft" = "draft"
+                        "Drafts" = "drafts"
                     ),
                     selected = "players",
                     label = "1. Choose a dataset"
@@ -45,7 +45,7 @@ ui <- navbarPage(
             column(4,
                    uiOutput("leaderboard_stats_choices"))
         ),
-        sliderInput("leaderboard_slider", min = 10, max=50, label = "Top :", value = 20)
+        sliderInput("leaderboard_slider", min = 10, max=60, label = "Top :", value = 20)
        ),
        fluidRow(
            splitLayout(
