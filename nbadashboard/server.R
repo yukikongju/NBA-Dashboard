@@ -308,7 +308,7 @@ server <- function(input, output, session) {
     
     output$dataset_download_hist <- downloadHandler(
         filename = function(){
-            paste0(datasetInput(), "histogram", variableInputX(), sep="_")},
+            paste0(get(datasetInput()), "histogram", variableInputX(), sep="_")},
         content=function(file){
             if(input$dataset_export_img=="png"){
                 png(file)
@@ -319,6 +319,19 @@ server <- function(input, output, session) {
             dev.off()
         }
     )
+    
+    output$dataset_download_dataset <- downloadHandler(
+        filename = function(){
+            paste(get(datasetInput()))
+        }, content = function(file){
+            sep <- switch( input$dataset_export_table,
+                           "csv"=",", "txt"=";")
+            write.table(datasetInput(), file, sep = sep)
+        }
+    )
+    
+    
+    
     
     
     output$dataset_rawdata <- DT::renderDataTable({
