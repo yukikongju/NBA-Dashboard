@@ -74,14 +74,23 @@ ui <- navbarPage(
     # ---------------- Comparing Player ----------------------
     tabPanel("Comparing Player",),
     
-    # --------------- Player Screener ----------------
+    # ---------------  Screener ----------------
     
-    tabPanel("Player Screener",
+    tabPanel(" Screener",
             fluidPage(
-                titlePanel("Player Screener"),
+                titlePanel("Screener"),
                 sidebarLayout(
-                sidebarPanel(),
-                mainPanel()
+                sidebarPanel(
+                    selectInput("screener_dataset_input",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries"), selected = "players"),
+                    uiOutput("screener_season"),
+                    uiOutput("screener_var1"),
+                    uiOutput("screener_var2"),
+                    uiOutput("screener_var3"),
+                    uiOutput("screener_var4")
+                ),
+                mainPanel(
+                    dataTableOutput("screener_table")
+                )
                 )
             ) ),
     # ----------------------------- View DataSet -------------------
@@ -103,7 +112,10 @@ ui <- navbarPage(
                                      plotOutput("dataset_histogram"),
                                      downloadButton("dataset_download_plot", label = "Download Plot")),
                             tabPanel("Summary",
-                                     downloadButton("dataset_download_summary",label = "Download Summary" )))
+                                     tableOutput("dataset_summary"),
+                                     downloadButton("dataset_download_summary",label = "Download Summary" )),
+                            tabPanel("Raw Data",
+                                     dataTableOutput("dataset_rawdata")))
                      )
                  )
              ))
