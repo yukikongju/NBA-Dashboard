@@ -101,16 +101,19 @@ ui <- navbarPage(
                  sidebarLayout(
                      sidebarPanel(
                          selectInput("select_dataset",label = "1. Select a dataset to view",choices =  c("Players Stats"="players", "Teams Stats"="teams", "Salaries"="salaries"), selected = "players"),
-                         
-                         uiOutput("dataset_columns"),
                          uiOutput("dataset_seasons"),
+                         uiOutput("dataset_columns_x"),
+                         uiOutput("dataset_columns_y"),
                          sliderInput("dataset_bins_slider", label = "3. Select a bins number to make the histogram", min=5, max=25, value = 15)
                      ),
                      mainPanel(
                          tabsetPanel(type="tab",
                             tabPanel("Histogram", 
                                      plotOutput("dataset_histogram"),
-                                     downloadButton("dataset_download_plot", label = "Download Plot")),
+                                     downloadButton("dataset_download_hist", label = "Download Histogram")),
+                            tabPanel("Scatter Plot",
+                                     plotOutput("dataset_scatterplot"),
+                                     downloadButton("dataset_download_scatplot", label = "Download Scatterplot")),
                             tabPanel("Summary",
                                      tableOutput("dataset_summary"),
                                      downloadButton("dataset_download_summary",label = "Download Summary" )),

@@ -3,10 +3,13 @@
 
 
 
+
+
 # ----------------- Dependencies ----------------
 library(shiny)
 library(ggplot2)
 library(dplyr)
+library(plotly)
 library(conflicted)
 
 # -------------- remove conflict ----------------
@@ -169,8 +172,12 @@ server <- function(input, output, session) {
             names()
     })
     
-    output$dataset_columns <- renderUI({
-        selectInput("dataset_variable", "2. Select a variable", choices = numeric_columns())
+    output$dataset_columns_x <- renderUI({
+        selectInput("dataset_variable_x", "3. Select a variable in x", choices = numeric_columns())
+    })
+    
+    output$dataset_columns_y <- renderUI({
+        selectInput("dataset_variable_y", "4. Select a variable in y", choices = numeric_columns())
     })
     
     season_level <- reactive({
@@ -178,31 +185,39 @@ server <- function(input, output, session) {
     })
     
     output$dataset_seasons <- renderUI({
-        selectInput("dataset_season", "3. Select a season", choices = season_level())
+        selectInput("dataset_season", "2. Select a season", choices = season_level())
     })
     
-    bins <- reactive({
+    binsInput <- reactive({
         input$dataset_bins_slider
     })
     
     variableInput <- reactive({
-        get(input$dataset_variable)
+        input$dataset_variable_x
+        
     })
     
     seasonInput <- reactive({
-        get(input$dataset_season)
+        input$dataset_season
     })
     
     output$dataset_histogram <- renderPlot({
-        # datasetInput() %>%
-        #     # filter(Season==seasonInput()) %>%
-        #     ggplot()+ geom_histogram(aes(variableInput()))
+       datasetInput() %>%
+             filter(Season==seasonInput()) %>%
+             ggplot(aes(x = get(variableInput()))) +
+             geom_histogram(bins = binsInput(), fill="#69b3a2", color="#e9ecef", alpha=0.8) +
+             xlab(toString(variableInput())) +
+            ggtitle(paste0("Histogram of ", variableInput(), " in ", seasonInput())) 
     })
     
+   
+    
     output$dataset_summary <- renderTable({
-        ds <- datasetInput() %>%
-            select(-c(Player, Team, Season, Pos))
-        summary(ds)
+        # ds <- datasetInput() %>%
+        #     select(-c(Player, Team, Season, Pos))
+        # summary(ds)
+        
+        # x<-summary(datasetInput()[,as.numeric(input$variableInput)])
         
         
     })
