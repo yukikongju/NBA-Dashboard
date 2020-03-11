@@ -246,13 +246,17 @@ server <- function(input, output, session) {
         input$dataset_season
     })
     
-    output$dataset_histogram <- renderPlot({
-       datasetInput() %>%
-             filter(Season==seasonInput()) %>%
-             ggplot(aes(x = get(variableInputX()))) +
-             geom_histogram(bins = binsInput(), fill="#69b3a2", color="#e9ecef", alpha=0.8) +
-             xlab(toString(variableInputX())) +
+    p_histogram <- reactive({
+        datasetInput() %>%
+            filter(Season==seasonInput()) %>%
+            ggplot(aes(x = get(variableInputX()))) +
+            geom_histogram(bins = binsInput(), fill="#69b3a2", color="#e9ecef", alpha=0.8) +
+            xlab(toString(variableInputX())) +
             ggtitle(paste0("Histogram of ", variableInputX(), " in ", seasonInput())) 
+    })
+    
+    output$dataset_histogram <- renderPlot({
+      p_histogram()
     })
     
     scatterplot_text_label <- reactive({
@@ -263,16 +267,19 @@ server <- function(input, output, session) {
       
     })
     
-    output$dataset_scatterplot <- renderPlotly({
-       scat <-  datasetInput() %>%
+    p_scatterplot <- reactive({
+        datasetInput() %>%
             filter(Season==seasonInput()) %>%
             ggplot(aes( x=get(variableInputX()), y=get(variableInputY())))+
             geom_point( aes(text=Player),alpha=0.6, color="#69b3a2") +
-             geom_smooth(method=lm, se=TRUE)+
+            geom_smooth(method=lm, se=TRUE)+
             xlab(variableInputX())+
             ylab(variableInputY())+
-           ggtitle(paste0("The relationship between ",variableInputX(), " and ", variableInputY(), " in ", seasonInput()))
-       ggplotly(scat) %>% 
+            ggtitle(paste0("The relationship between ",variableInputX(), " and ", variableInputY(), " in ", seasonInput()))
+    })
+    
+    output$dataset_scatterplot <- renderPlotly({
+       ggplotly(p_scatterplot()) %>% 
            config(displayModeBar=FALSE)
         
     })
@@ -298,6 +305,21 @@ server <- function(input, output, session) {
         
         
     })
+    
+    output$dataset_download_hist <- downloadHandler(
+        filename = function(){
+            paste0(datasetInput(), "histogram", variableInputX(), sep="_")},
+        content=function(file){
+            if(input$dataset_export_img=="png"){
+                png(file)
+            } else{
+                pdf(file)
+            }
+            p_histogram()
+            dev.off()
+        }
+    )
+    
     
     output$dataset_rawdata <- DT::renderDataTable({
         datasetInput() %>% 

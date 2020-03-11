@@ -118,7 +118,11 @@ ui <- navbarPage(
                          uiOutput("dataset_seasons"),
                          uiOutput("dataset_columns_x"),
                          uiOutput("dataset_columns_y"),
-                         sliderInput("dataset_bins_slider", label = "5. Select a bins number to make the histogram", min=5, max=25, value = 15)
+                         sliderInput("dataset_bins_slider", label = "5. Select a bins number to make the histogram", min=5, max=25, value = 15),
+                         splitLayout(
+                             radioButtons("dataset_export_img", choices=c("png", "pdf"), selected="png", label = "6. Export image in:"),
+                             radioButtons("dataset_export_table", choices = c("csv", "txt"), selected = "csv", label = "7. Export table in: ")
+                         )
                      ),
                      mainPanel(
                          tabsetPanel(type="tab",
@@ -135,7 +139,8 @@ ui <- navbarPage(
                             tabPanel("Facets",
                                      ),
                             tabPanel("Raw Data",
-                                    DT:: dataTableOutput("dataset_rawdata")
+                                    DT:: dataTableOutput("dataset_rawdata"),
+                                    downloadButton("dataset_download_dataset",label = "Download Dataset" )
                                     ))
                      )
                  )
