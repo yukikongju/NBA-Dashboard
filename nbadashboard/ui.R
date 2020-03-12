@@ -59,26 +59,36 @@ ui <- navbarPage(
     
     tabPanel("Player Evolution",
              fluidPage(
-                 fixedRow(column(
-                     12,
-                     selectizeInput("search_player", choices = d_players_name, label = "Search player")
-                 )),
                  fluidRow(
-                     column(
-                         6,
-                         fluidRow(imageOutput("player_image")),
-                         fluidRow(textOutput("player_team")),
-                         fluidRow(textOutput("player_age")),
-                         fluidRow(textOutput("player_pos"))
-                         
+                     fluidRow(
+                         column(3, 
+                                wellPanel(
+                                    selectInput("evolution_dataset_choices", choices = c(
+                                        "Players Stats" = "players",
+                                        "Teams Stats" = "teams"
+                                    ),
+                                    selected = "players",
+                                    label = "1. Choose a dataset"),
+                                    uiOutput("evolution_individual_choices"),
+                                    uiOutput("evolution_season_choices"),
+                                    uiOutput("evolution_stats_choices")
+                                ) ),
+                         column(8,
+                                tabsetPanel(
+                                    tabPanel("League Comparison",
+                                             plotOutput("evolution_plot_league_comparison")),
+                                    tabPanel("Across the Years",
+                                             plotOutput("evolution_plot_across_years"))
+                                ))
                      ),
-                     column(6, plotOutput("evolution_plot"))
-                 ),
-                 fluidRow(tabsetPanel(
-                     type = "tabs",
-                     tabPanel("Regular Stats", tableOutput("stats_table_regular")),
-                     tabPanel("Advanced Metrics", tableOutput("stats_table_advanced"))
-                 ))
+                     tags$h3("Career Stats"), 
+                     fluidRow(tabsetPanel(
+                         type = "tabs",
+                         tabPanel("Regular Stats", tableOutput("stats_table_regular")),
+                         tabPanel("Advanced Metrics", tableOutput("stats_table_advanced"))
+                     ))
+                     
+                 )
                  
              )),
     
