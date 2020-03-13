@@ -11,14 +11,12 @@ The dashboard was constructed using shiny and the plots were built using ggplot 
 
 ### Leaderboard
 
-### Player Evolution
-
-### Team Evolution
+### Evolution
 
 ### Player Comparison
 
 ### Player Screener
 
 ### View Dataset
-
+![alt text](https://raw.githubusercontent.com/YukiDaSlayer316/NBA-Dashboard/screenshots/screener.png)
 
