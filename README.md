@@ -11,7 +11,7 @@ The dashboard was constructed using shiny and the plots were built using ggplot 
 
 ### Leaderboard
 
-Allows the user to view the top players or team based on a numerical statistic.
+Allows the user to view the top players or teams based on a numerical statistic.
 
 ### Evolution
 
@@ -29,7 +29,7 @@ Allows the user to choose a dataset and find an observation that matches filters
 
 ### View Dataset
 
-Allows the user to view and download a histogram, a scatterplot, a summary of the variables and the raw observations of a dataset 
+Allows the user to view and download a histogram, a scatterplot, a summary of the variables and raw observations of a dataset 
 
 ![Screenshot](screenshots/view_dataset.png)
 
