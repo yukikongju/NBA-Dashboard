@@ -18,5 +18,5 @@ The dashboard was constructed using shiny and the plots were built using ggplot 
 ### Player Screener
 
 ### View Dataset
-![alt text](https://raw.githubusercontent.com/YukiDaSlayer316/NBA-Dashboard/screenshots/screener.png)
+![Screenshot](screenshots/screener.png)
 
