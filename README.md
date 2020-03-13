@@ -13,7 +13,7 @@ The dashboard was constructed using shiny and the plots were built using ggplot 
 
 ### Evolution
 
-### Player Comparison
+### Comparison
 
 ### Screener
 
