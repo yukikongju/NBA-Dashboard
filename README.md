@@ -11,13 +11,19 @@ The dashboard was constructed using shiny and the plots were built using ggplot 
 
 ### Leaderboard
 
+Allows the user to view the top players or team based on a numerical statistic.
+
 ### Evolution
+
+Allows the user to see a player's or team's stats across the season through a table and a graph. Compares that metrics to league average.
 
 ### Comparison
 
+Allows the user to compare two players or teams for a particular season. 
+
 ### Screener
 
-Allows the user to choose a dataset and find an observation that matches filters inputs
+Allows the user to choose a dataset and find an observation that matches filters inputs.
 
 ![Screenshot](screenshots/screener.png)
 
