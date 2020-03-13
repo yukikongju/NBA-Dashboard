@@ -15,8 +15,9 @@ The dashboard was constructed using shiny and the plots were built using ggplot 
 
 ### Player Comparison
 
-### Player Screener
+### Screener
+![Screenshot](screenshots/screener.png)
 
 ### View Dataset
-![Screenshot](screenshots/screener.png)
+![Screenshot](screenshots/view_dataset.png)
 
