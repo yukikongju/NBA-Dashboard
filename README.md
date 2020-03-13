@@ -16,8 +16,14 @@ The dashboard was constructed using shiny and the plots were built using ggplot 
 ### Player Comparison
 
 ### Screener
+
+Allows the user to choose a dataset and find an observation that matches filters inputs
+
 ![Screenshot](screenshots/screener.png)
 
 ### View Dataset
+
+Allows the user to view and download a histogram, a scatterplot, a summary of the variables and the raw observations of a dataset 
+
 ![Screenshot](screenshots/view_dataset.png)
 
