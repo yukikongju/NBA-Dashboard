@@ -1,0 +1,94 @@
+---
+title: "Analyzing NBA across the League"
+author: "by YukiKongJu"
+date: "22/03/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(dplyr)
+library(conflicted)
+
+library(Hmisc)
+library(purrr)
+library(tidyr)
+
+```
+
+## Introduction
+
+Every years, NBA teams try to assemble the best talents in order to be championship contenders. Teams can acquire new talents with the draft, through trades and in free agency. When drafting, franchises have the upper hand. There is no need for negotiation because there is no negotiation. The rookie plays with the team that drafted him, end of the story. But in free agency, however, things are different. Usually, the player has the leverage when negotiating. He receives several offers and he has the power to choose where he goes. 
+
+To entice a player to sign with them, an organisation can offer great facilities, can provide great coaching and healthcare professionals, and can even play the "great city card". But mostly, they rely on money to lure a player. If this bidding were to happen in real life, the franchise who would throw the most money to obtain a player would actually get him. However, NBA contracts doesn't work like real life. Each team has a "Salary Gap", a money ceiling that they can't go over or else they are being taxed twice for each dollar over this cap. A bad contract could prevent a team from signing or resigning players. Therefore, GMs want to find player that give them the best bank for their bucks. They want to find players that can produce more than they are paid to.
+
+This analysis tries to answer this question: who are the player who produce more than they are being paid to? Answering this question will give us valuable insights about the future. If a player knows that he produces more than he is being paid, then he will bargain for a better contract the next free agency. Similarly, if an organisation knows that a player is undervalued, they are more likely to go after that player, since they become an asset rather than a liability. But how do we measure a player worth?
+
+## Measuring a player's worth
+
+In order to compare the players, we will quantify a player's worth based on a score given by their salary for a particular year and their production. We will then classify players to see if they overperform or underperform.
+
+We also have to account for the team a player is in. A player surrounded with talents will have to share the ball more and will thus have less opportunity to shoot the ball. In contrast, a player whose team lack talent will have more freedom to hog the ball and his stats will most likely be inflated.
+
+Another facet we have to account for is game time. A player who play more usually will be less efficient. We don't necessarly want to penalize that. A player who hasn't play a lot of game is more likely to produce outliers stats, since our pool sample is small.
+
+## Limitations
+
+Unfortunately, our assessment of a player's contribution is only quantified by his number. We don't account for their leadership or their intangibles. After getting the results, we suggest to use the "eye-test".
+
+## Scrapping the data from the Web
+
+To answer this question, we first have to get a dataset. We will retrieve the dataset from basketball-references.com and scrape the data usign rvest. I will first render a table with regular stats, then do the same thing with advanced stats and then concatenate them. This step was done in "the stats_loader.R" file, so I only need to import it
+
+```{r}
+# d_season_combined=read.csv("season_combined.csv")
+```
+
+
+## Part 1: Understanding how players and the league perform
+
+In this part, we want to get an overview of the players' performance around the league with data exploration. We will first look at the variation within a statistics. We will visualize their frequency and distribution and summarise their average using population parameters Then, we want to understand the relationship between each variable visually (scatterplot) and quantify the strength of these relation using correlation. Assessing the relationship between these variables will alllow us to create an accurate way to calculate our score.
+
+### Population parameters
+
+First, we want to draw a histogram for all of our numerical variables. This will help us visualize which variables are normally distributed.
+
+```{r}
+
+d_season_combined %>%
+  select_if(is.numeric) %>%
+  hist.data.frame(rugs = TRUE)
+
+# d_season_combined %>%
+#   keep(is.numeric) %>%
+#   gather() %>%
+#   ggplot(aes(value)) +
+#     facet_wrap(~ key, scales = "free") +
+#     geom_histogram()
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
