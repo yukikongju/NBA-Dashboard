@@ -1,8 +1,4 @@
 
-
-
-
-
 #---------------------------- Dependencies -------------------------------------------
 
 library(rvest)
@@ -13,6 +9,7 @@ library(janitor)
 library(jsonlite)
 library(gapminder)
 library(stringr)
+library(purrr)
 
 # ------------------------------------ Useful Links -------------------------------
 # updateSelectInput:
@@ -93,7 +90,7 @@ d_season_combined <- d_season_combined %>%
 
 d_season_combined$Player <- as.character(d_season_combined$Player)
 
-# write.csv(d_season_combined, "season_combined.csv")
+write.csv(d_season_combined, "season_combined.csv")
 
 # ----------------------------- Player All-Time stats -----------------------------------
 
@@ -179,41 +176,43 @@ d_league_average <- d_season_combined %>%
 
 # ----------------------------- residual around league average mean ---------------------
 
-d_residuals <- d_season_combined %>%
-  select(c(Team, Player, Pos, Season))
-
-# x %>% mutate_at(vars(d_season_combined), funs(stringr::str_replace_all(., ",", "")))
-
-column_names <- d_season_combined  %>%
-  select(-c(Player, Pos, Season, Team)) %>%
-  colnames()
-
-d_residuals <-
-  lapply(d_season_combined[column_names], function(i)
-    y - d_league_average[i]) %>% bind_rows()
-lapply(d_season_combined[column_names], function(i)
-  x - mean(x)) %>% bind_rows()
-
-d_season_combined %>%
-  select(-c(Player, Pos, Season, Team)) %>%
-  mutate_all(function(i)
-    x - mean(x))
-
-f_diff_mean <- function(i)
-  x - mean(x)
-
-d_residuals <- d_season_combined %>%
-  select(-c(Pos, Team)) %>%
-  group_by(Season, Player) %>%
-  summarise_all(function(i)
-    d_league_average[i])
+d_residuals <- 
+  d_season_combined %>%
+  select(-c(Player, Team, Pos)) %>%
+  mutate_if(is.character, as.numeric) %>%
+  mutate_all(~. - mean(., na.rm = TRUE))
 
 #  ----------------- residual for a single column --------
 
-d_season_combined %>%
-  select(PTS) %>%
-  lapply(function(i)
-    i - d_league_average$PTS) %>% head()
+calculateColumnResiduals(d_season_combined, "PTS")
+# 
+# calculateColumnResiduals <- function(dataset,.x){
+#   mean <-mean(dataset[,.x])
+#   
+#   dataset %>%
+#     select(.x) %>%
+#     lapply(function(i){
+#       i - mean
+#     })
+# 
+# }
+
+# 
+# calculateTableResiduals <- function(dataset){
+#   lapply(colnames(dataset), function(x){
+#     mean <-mean(dataset[,x])
+#     
+#     dataset %>%
+#       select(x) %>%
+#       lapply(function(j){
+#         j - mean
+#       })
+#   })
+#   
+# }
+
+
+
 
 # ------------------------ NBA Draft ---------------------
 
@@ -258,3 +257,4 @@ d_draft <- d_draft %>%
   mutate_if(is.character, as.numeric)
 
 d_draft$Player <- as.character(d_draft$Player)
+
