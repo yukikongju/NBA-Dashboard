@@ -1,7 +1,3 @@
-
-
-
-
 # ----------------------------------Dependencies ----------------------------------------
 
 library(shiny)
@@ -45,19 +41,25 @@ ui <- navbarPage(
             column(4,
                    uiOutput("leaderboard_stats_choices"))
         ),
-        sliderInput("leaderboard_slider", min = 10, max=60, label = "Top :", value = 20)
+        ##sliderInput("leaderboard_slider", min = 10, max=60, label = "Top :", value = 20)
        ),
        fluidRow(
-           splitLayout(
-              DT:: dataTableOutput("leaderboard_table"),
-               plotOutput("leaderboard_plot")
-           )
+           column(4, DT:: dataTableOutput("leaderboard_table")),
+           column(8, 
+                  tabsetPanel(
+                      tabPanel("Mean residuals", plotOutput("leaderboard_plot")),
+                      tabPanel("Clustering"), 
+                      tabPanel("Heatmap"),
+                      tabPanel("PCA")
+                  ))
+           
        )
     )),
     
-    # ------------ Player evolution ------------------
+    # ------------ Evolution ------------------
     
-    tabPanel("Player Evolution",
+    tabPanel(" Evolution",
+             titlePanel("Evolution"),
              fluidPage(
                  fluidRow(
                      fluidRow(
@@ -92,8 +94,8 @@ ui <- navbarPage(
                  
              )),
     
-    # ---------------- Comparing Player ----------------------
-    tabPanel("Comparing Player", ),
+    # ---------------- Comparison ----------------------
+    tabPanel("Comparison", ),
     
     # ---------------  Screener ----------------
     
@@ -203,7 +205,7 @@ ui <- navbarPage(
                              ),
                              tabPanel(
                                  "Summary",
-                                 tableOutput("dataset_summary"),
+                                 verbatimTextOutput("dataset_summary"),
                                  downloadButton("dataset_download_summary", label = "Download Summary")
                              ),
                              tabPanel("Facets",),

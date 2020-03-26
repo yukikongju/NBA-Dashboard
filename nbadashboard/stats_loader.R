@@ -176,7 +176,7 @@ d_league_average <- d_season_combined %>%
 
 # ----------------------------- residual around league average mean ---------------------
 
-d_residuals <-  d_season_combined %>%
+d_season_residuals <-  d_season_combined %>%
   mutate_if(is.numeric, ~ . - mean(., na.rm = TRUE)) 
 
 calculateTableResiduals <- function(dataset){
