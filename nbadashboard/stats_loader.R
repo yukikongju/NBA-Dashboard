@@ -176,42 +176,43 @@ d_league_average <- d_season_combined %>%
 
 # ----------------------------- residual around league average mean ---------------------
 
-d_residuals <- 
-  d_season_combined %>%
-  select(-c(Player, Team, Pos)) %>%
-  mutate_if(is.character, as.numeric) %>%
-  mutate_all(~. - mean(., na.rm = TRUE))
+d_season_residuals <-  d_season_combined %>%
+  mutate_if(is.numeric, ~ . - mean(., na.rm = TRUE)) 
 
-#  ----------------- residual for a single column --------
+calculateTableResiduals <- function(dataset){
+   dataset %>%
+    mutate_if(is.numeric, calculateColumnResiduals)
+  
+}
 
-calculateColumnResiduals(d_season_combined, "PTS")
-# 
-# calculateColumnResiduals <- function(dataset,.x){
-#   mean <-mean(dataset[,.x])
-#   
-#   dataset %>%
-#     select(.x) %>%
-#     lapply(function(i){
-#       i - mean
-#     })
-# 
-# }
 
-# 
+
+calculateColumnResiduals <- function(col){
+  lapply(function(j){
+            j - mean
+          })
+}
+
+calculateTableResiduals(d_season_combined)
+
+#  ----------------- residual Table--------
+
 # calculateTableResiduals <- function(dataset){
-#   lapply(colnames(dataset), function(x){
+#   numerical_cols <- dataset %>% select_if(is.numeric)
+#   
+#   t_residuals<- lapply(colnames(numerical_cols), function(x, dataset){
 #     mean <-mean(dataset[,x])
-#     
+# 
 #     dataset %>%
 #       select(x) %>%
 #       lapply(function(j){
 #         j - mean
 #       })
-#   })
+#   }, dataset) 
 #   
 # }
 
-
+d_season_residuals <- calculateTableResiduals(d_season_combined)
 
 
 # ------------------------ NBA Draft ---------------------
