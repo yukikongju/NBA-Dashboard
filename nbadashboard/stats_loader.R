@@ -155,6 +155,7 @@ d_teams_division <- d_team_standing_raw[3] %>%
 #   html_nodes(".right , .left , .center") %>%
 #   html_text()
 
+write.csv(d_team_regular_raw, "teams_combined.csv")
 
 
 # ------------------------------ Player salaries ----------------------------------------
@@ -214,6 +215,8 @@ calculateTableResiduals(d_season_combined)
 
 d_season_residuals <- calculateTableResiduals(d_season_combined)
 
+write.csv(d_season_residuals, "season_residuals.csv")
+
 
 # ------------------------ NBA Draft ---------------------
 
@@ -258,4 +261,6 @@ d_draft <- d_draft %>%
   mutate_if(is.character, as.numeric)
 
 d_draft$Player <- as.character(d_draft$Player)
+
+write.csv(d_draft, "draft.csv")
 

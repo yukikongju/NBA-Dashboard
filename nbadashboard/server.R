@@ -89,17 +89,10 @@ server <- function(input, output, session) {
     
   })
   
-  output$leaderboard_plot <- renderPlot({
-   # subMat <-  leaderboardResidualDataset() %>%
-   #    filter(Season == leaderboardSeasonChosen()) %>%
-   #    select(leaderboardStatsChosen(), Player, Season) %>%
-   #    arrange(desc(PTS)) %>%
-   #    top_n(20) 
-   #  
-   # subMat %>%   ggplot(aes(leaderboardStatsChosen()))+geom_bar()
-
-    
-    
+ 
+  
+  ### todo: player swtich to team
+  output$leaderboard_summary <- renderPrint({
     
   })
   
@@ -108,18 +101,38 @@ server <- function(input, output, session) {
             "players" = d_season_residuals)
   })
   
-  ### player swtich to team
-  output$leaderboard_summary <- renderPrint({
+  output$leaderboard_residuals <- renderPlot({
     
   })
   
-  # d_season_residuals %>%
-  #   filter(Season == "2017-2018") %>%
-  #   arrange(desc(PTS)) %>%
-  #   top_n(20) %>% 
-  #    select(PTS, Player, Season) %>% 
-  #   ggplot(aes(PTS))+geom_bar()
-  # 
+  ##############
+  
+  p_leaderboard_hist <- reactive({
+    # mean <- mean(leaderboardDatasetInput()$leaderboardStatsChosen())
+    
+   leaderboardDatasetInput() %>% 
+      filter(Season==leaderboardSeasonChosen()) %>% 
+      ggplot(aes(x = get(leaderboardStatsChosen()))) +
+      geom_histogram(
+        aes(y = ..density..),
+        bins = binsInput(),
+        fill = "#69b3a2",
+        color = "#e9ecef",
+        alpha = 0.8
+      ) +
+      xlab(toString(leaderboardStatsChosen())) +
+      ggtitle(paste0("Histogram of ", leaderboardStatsChosen(), " in ", leaderboardSeasonChosen()))
+    #       stat_function(fun = dnorm, args = list(mean = mean(leaderboardDatasetInput()$get(leaderboardStatsChosen())),
+    #                                          sd = sd(leaderboardDatasetInput()$get(leaderboardStatsChosen()))))
+
+    
+    
+  })
+  
+  output$leaderboard_distribution <- renderPlot({
+    p_leaderboard_hist()
+     })
+  
   
   
   # ------------ Player evolution ------------------
