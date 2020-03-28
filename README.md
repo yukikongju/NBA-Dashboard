@@ -13,6 +13,8 @@ The dashboard was constructed using shiny and the plots were built using ggplot 
 
 Allow the user to view the top players or teams based on a numerical statistic.
 
+![Screenshot](screenshots/leaderboard.png)
+
 ### Evolution
 
 Allow the user to see a player's or team's stats across the season through a table and a graph. Compares that metrics to league average.
