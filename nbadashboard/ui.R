@@ -40,20 +40,23 @@ ui <- navbarPage(
                    uiOutput("leaderboard_season_choices")),
             column(4,
                    uiOutput("leaderboard_stats_choices"))
-        ),
+        )
         ##sliderInput("leaderboard_slider", min = 10, max=60, label = "Top :", value = 20)
        ),
        fluidRow(
-           column(4, DT:: dataTableOutput("leaderboard_table")),
            column(8, 
                   tabsetPanel(
-                      tabPanel("Mean residuals", plotOutput("leaderboard_plot")),
-                      tabPanel("Clustering"), 
-                      tabPanel("Heatmap"),
-                      tabPanel("PCA")
-                  ))
+                      tabPanel("Distribution", plotOutput("leaderboard_distribution")),
+                      tabPanel("Mean residuals", plotOutput("leaderboard_residuals")),
+                      tabPanel("K-means clustering", plotOutput("leaderboard_kmeans")), 
+                      tabPanel("Heatmap", plotOutput("leaderboard_heatmap")),
+                      tabPanel("PCA", plotOutput("leaderboard_pca")),
+                      tabPanel("SVM", plotOutput("leaderboard_SVM"))
+                  )),
+           column(4,  fluidRow( DT:: dataTableOutput("leaderboard_table")))
            
        )
+      
     )),
     
     # ------------ Evolution ------------------
