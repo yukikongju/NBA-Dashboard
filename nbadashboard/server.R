@@ -256,6 +256,14 @@ server <- function(input, output, session) {
     
   })
   
+  
+  output$evolution_league_comparison_summary <- renderPrint({
+    ds <- evolutionDatasetChosen() %>% 
+      select(evolutionStatsChosen())
+    summary(ds)
+    
+  })
+  
   output$evolution_plot_across_years <- renderPlot({
       
   })
@@ -486,8 +494,6 @@ server <- function(input, output, session) {
     ds <- datasetInput() %>%
       select(-c(Player, Team, Season, Pos))
     summary(ds)
-    
-    # x<-summary(datasetInput()[,as.numeric(input$variableInput)])
     
     
   })
