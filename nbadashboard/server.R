@@ -38,7 +38,7 @@ server <- function(input, output, session) {
   
   leaderboardCharColumn <- reactive({
     switch(
-      datasetInput(),
+      leaderboardDatasetInput(),
       "players" = Player,
       "teams" = Team,
       "draft" = Player
@@ -135,7 +135,7 @@ server <- function(input, output, session) {
   
   
   
-  # ------------ Player evolution ------------------
+  # ------------ Player Evolution ------------------
   
   evolutionDatasetChosen <- reactive({
     switch (input$evolution_dataset_choices,
@@ -166,9 +166,7 @@ server <- function(input, output, session) {
   evolutionIndividualChoices <- reactive({
     evolutionDatasetChosen() %>%
       select(evolutionColumnBase())
-    # %>%
-    #       distinct(Player, .keep_all = TRUE) %>%
-    #       arrange(Player)
+    
   })
   
   output$evolution_individual_choices <- renderUI({
@@ -209,7 +207,7 @@ server <- function(input, output, session) {
   output$stats_table_advanced <- renderTable({
     ## switch player to team if team ds
     evolutionDatasetChosen() %>%
-      filter(Player == individualChosen()) %>%
+      filter(get(evolutionColumnBase()) == individualChosen()) %>%
       select(Season, advancedStats) %>%
       arrange(desc(Season)) %>%
       select(Season, everything())
@@ -231,12 +229,35 @@ server <- function(input, output, session) {
   #     paste("Position : ", position)
   # })
   
+  evolutionStatsChosen <- reactive({
+    input$evolutionStatsInput
+  })
+  
+  evolutionSeasonChosen <- reactive({
+    input$evolutionSeasonInput
+  })
+  
   output$evolution_plot_league_comparison <- renderPlot({
+  individualRow <- evolutionDatasetChosen() %>% 
+   filter(get(evolutionColumnBase())==individualChosen(),
+          Season==evolutionSeasonChosen()) 
+  
+    evolutionDatasetChosen() %>% 
+      filter(Season==evolutionSeasonChosen()) %>% 
+      ggplot(aes("", y=get(evolutionStatsChosen())))+
+      geom_boxplot()+
+      coord_flip()+
+      ggtitle(paste0("League ", evolutionStatsChosen(), " average in ", evolutionSeasonChosen()))+
+      ylab(evolutionStatsChosen())+
+      xlab("value")+
+      geom_point(data=individualRow,aes(x="", y=as.numeric(get(evolutionStatsChosen()))),
+                 color='red', size=3)+
+      geom_text(data = individualRow, aes(label=individualChosen()), vjust=-1)
     
   })
   
   output$evolution_plot_across_years <- renderPlot({
-    
+      
   })
   
   
