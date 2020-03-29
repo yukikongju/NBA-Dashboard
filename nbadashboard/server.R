@@ -198,8 +198,8 @@ server <- function(input, output, session) {
   output$stats_table_regular <- renderTable({
     ## switch player to team if team ds
     evolutionDatasetChosen() %>%
-      filter(Player == individualChosen()) %>%
-      select(Season, regularStats) %>%
+      filter(get(evolutionColumnBase()) == individualChosen()) %>%
+      # select(Season, regularStats) %>%
       arrange(desc(Season)) %>%
       select(Season, everything())
   })
@@ -208,28 +208,12 @@ server <- function(input, output, session) {
     ## switch player to team if team ds
     evolutionDatasetChosen() %>%
       filter(get(evolutionColumnBase()) == individualChosen()) %>%
-      select(Season, advancedStats) %>%
+      # select(Season, advancedStats) %>%
       arrange(desc(Season)) %>%
       select(Season, everything())
   })
   
-  
-  # output$player_team <- renderText({
-  #     team = (d_season_combined %>% filter(Player == player()) %>% select(Team))[1,]
-  #     paste("Team : ", team)
-  # })
-  #
-  # output$player_age <- renderText({
-  #     age = (d_season_combined %>% filter(Player == player()) %>% select(Age))[1,]
-  #     paste("Age : ", age)
-  # })
-  #
-  # output$player_pos <- renderText({
-  #     position = (d_season_combined %>% filter(Player == player()) %>% select(Pos))[1,]
-  #     paste("Position : ", position)
-  # })
-  
-  evolutionStatsChosen <- reactive({
+   evolutionStatsChosen <- reactive({
     input$evolutionStatsInput
   })
   
