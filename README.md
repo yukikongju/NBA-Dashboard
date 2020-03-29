@@ -19,6 +19,8 @@ Allow the user to view the top players or teams based on a numerical statistic.
 
 Allow the user to see a player's or team's stats across the season through a table and a graph. Compares that metrics to league average.
 
+![Screenshot](screenshots/evolution.png)
+
 ### Comparison
 
 Allow the user to compare two players or teams for a particular season. 
@@ -32,5 +34,7 @@ Allow the user to choose a dataset and find an observation that matches filters 
 ### View Dataset
 
 Allow the user to view and download a histogram, a scatterplot, a summary of the variables and raw observations of a dataset 
+
+![Screenshot](screenshots/view_dataset.png)
 
 
