@@ -38,7 +38,7 @@ server <- function(input, output, session) {
   
   leaderboardCharColumn <- reactive({
     switch(
-      datasetInput(),
+      leaderboardDatasetInput(),
       "players" = Player,
       "teams" = Team,
       "draft" = Player
@@ -135,7 +135,7 @@ server <- function(input, output, session) {
   
   
   
-  # ------------ Player evolution ------------------
+  # ------------ Player Evolution ------------------
   
   evolutionDatasetChosen <- reactive({
     switch (input$evolution_dataset_choices,
@@ -166,9 +166,7 @@ server <- function(input, output, session) {
   evolutionIndividualChoices <- reactive({
     evolutionDatasetChosen() %>%
       select(evolutionColumnBase())
-    # %>%
-    #       distinct(Player, .keep_all = TRUE) %>%
-    #       arrange(Player)
+    
   })
   
   output$evolution_individual_choices <- renderUI({
@@ -200,8 +198,8 @@ server <- function(input, output, session) {
   output$stats_table_regular <- renderTable({
     ## switch player to team if team ds
     evolutionDatasetChosen() %>%
-      filter(Player == individualChosen()) %>%
-      select(Season, regularStats) %>%
+      filter(get(evolutionColumnBase()) == individualChosen()) %>%
+      # select(Season, regularStats) %>%
       arrange(desc(Season)) %>%
       select(Season, everything())
   })
@@ -209,34 +207,49 @@ server <- function(input, output, session) {
   output$stats_table_advanced <- renderTable({
     ## switch player to team if team ds
     evolutionDatasetChosen() %>%
-      filter(Player == individualChosen()) %>%
-      select(Season, advancedStats) %>%
+      filter(get(evolutionColumnBase()) == individualChosen()) %>%
+      # select(Season, advancedStats) %>%
       arrange(desc(Season)) %>%
       select(Season, everything())
   })
   
+   evolutionStatsChosen <- reactive({
+    input$evolutionStatsInput
+  })
   
-  # output$player_team <- renderText({
-  #     team = (d_season_combined %>% filter(Player == player()) %>% select(Team))[1,]
-  #     paste("Team : ", team)
-  # })
-  #
-  # output$player_age <- renderText({
-  #     age = (d_season_combined %>% filter(Player == player()) %>% select(Age))[1,]
-  #     paste("Age : ", age)
-  # })
-  #
-  # output$player_pos <- renderText({
-  #     position = (d_season_combined %>% filter(Player == player()) %>% select(Pos))[1,]
-  #     paste("Position : ", position)
-  # })
+  evolutionSeasonChosen <- reactive({
+    input$evolutionSeasonInput
+  })
   
   output$evolution_plot_league_comparison <- renderPlot({
+  individualRow <- evolutionDatasetChosen() %>% 
+   filter(get(evolutionColumnBase())==individualChosen(),
+          Season==evolutionSeasonChosen()) 
+  
+    evolutionDatasetChosen() %>% 
+      filter(Season==evolutionSeasonChosen()) %>% 
+      ggplot(aes("", y=get(evolutionStatsChosen())))+
+      geom_boxplot()+
+      coord_flip()+
+      ggtitle(paste0("League ", evolutionStatsChosen(), " average in ", evolutionSeasonChosen()))+
+      ylab(evolutionStatsChosen())+
+      xlab("value")+
+      geom_point(data=individualRow,aes(x="", y=as.numeric(get(evolutionStatsChosen()))),
+                 color='red', size=3)+
+      geom_text(data = individualRow, aes(label=individualChosen()), vjust=-1)
+    
+  })
+  
+  
+  output$evolution_league_comparison_summary <- renderPrint({
+    ds <- evolutionDatasetChosen() %>% 
+      select(evolutionStatsChosen())
+    summary(ds)
     
   })
   
   output$evolution_plot_across_years <- renderPlot({
-    
+      
   })
   
   
@@ -465,8 +478,6 @@ server <- function(input, output, session) {
     ds <- datasetInput() %>%
       select(-c(Player, Team, Season, Pos))
     summary(ds)
-    
-    # x<-summary(datasetInput()[,as.numeric(input$variableInput)])
     
     
   })

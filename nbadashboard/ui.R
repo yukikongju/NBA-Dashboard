@@ -81,7 +81,8 @@ ui <- navbarPage(
                          column(8,
                                 tabsetPanel(
                                     tabPanel("League Comparison",
-                                             plotOutput("evolution_plot_league_comparison")),
+                                             plotOutput("evolution_plot_league_comparison"),
+                                             verbatimTextOutput("evolution_league_comparison_summary")),
                                     tabPanel("Across the Years",
                                              plotOutput("evolution_plot_across_years"))
                                 ))
