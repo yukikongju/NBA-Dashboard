@@ -33,5 +33,4 @@ Allow the user to choose a dataset and find an observation that matches filters 
 
 Allow the user to view and download a histogram, a scatterplot, a summary of the variables and raw observations of a dataset 
 
-![Screenshot](screenshots/view_dataset.png)
 
