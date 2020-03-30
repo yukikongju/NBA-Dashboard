@@ -38,10 +38,10 @@ server <- function(input, output, session) {
   
   leaderboardCharColumn <- reactive({
     switch(
-      leaderboardDatasetInput(),
-      "players" = Player,
-      "teams" = Team,
-      "draft" = Player
+      input$leaderboard_dataset_input,
+      "players" = 'Player',
+      "teams" = 'Team',
+      "draft" = 'Player'
     )
   })
   
@@ -71,10 +71,6 @@ server <- function(input, output, session) {
     input$leaderboard_statsInput
   })
   
-  # leaderboardTopSliderChosen <- reactive({
-  #   input$leaderboard_slider
-  # })
-  
   leaderboardSeasonChosen <- reactive({
     input$leaderboard_seasonInput
   })
@@ -82,9 +78,8 @@ server <- function(input, output, session) {
   output$leaderboard_table <- DT::renderDataTable({
     leaderboardDatasetInput() %>%
       filter(Season == leaderboardSeasonChosen()) %>%
-      select(Player, Team, leaderboardStatsChosen()) %>%
+      select(leaderboardCharColumn(), Team, leaderboardStatsChosen()) %>%
       dplyr::arrange(desc(get(leaderboardStatsChosen()))) %>%
-      # top_n(leaderboardTopSliderChosen())
       top_n(60)
     
   })
@@ -104,8 +99,6 @@ server <- function(input, output, session) {
   output$leaderboard_residuals <- renderPlot({
     
   })
-  
-  ##############
   
   p_leaderboard_hist <- reactive({
     # mean <- mean(leaderboardDatasetInput()$leaderboardStatsChosen())
@@ -143,8 +136,7 @@ server <- function(input, output, session) {
             "teams" = d_team_regular_raw)
   })
   
-  #### make season choices show only players' seasons. will create problem when plotting
-  evolutionSeasonChoices <- reactive({
+   evolutionSeasonChoices <- reactive({
     levels(evolutionDatasetChosen()$Season)
   })
   
@@ -154,7 +146,6 @@ server <- function(input, output, session) {
                 label = "3. Choose a season")
   })
   
-  #########3 '' vs "" vs nothing
   evolutionColumnBase <- reactive({
     switch (input$evolution_dataset_choices,
             "players" = 'Player',
@@ -162,11 +153,9 @@ server <- function(input, output, session) {
     
   })
   
-  ######### switch Player or Team column
   evolutionIndividualChoices <- reactive({
     evolutionDatasetChosen() %>%
       select(evolutionColumnBase())
-    
   })
   
   output$evolution_individual_choices <- renderUI({
@@ -254,6 +243,56 @@ server <- function(input, output, session) {
   
   
   # ------------- Comparing players ----------------
+  
+  comparisonDatasetChosen <- reactive({
+    switch (input$comparison_dataset_input,
+            "players" = d_season_combined,
+            "teams" = d_team_regular_raw,
+            "draft" = d_draft
+      )})
+  
+  comparisonSeasonChoices <- reactive({
+    levels(comparisonDatasetChosen()$Season)
+    })
+  
+  output$comparison_season <- renderUI({
+    selectInput("comparison_season_choices", label = "Choose a season",
+                choices = comparisonSeasonChoices())
+  })
+  
+  comparisonIndividualSelected <- reactive({
+    switch (input$comparison_dataset_input,
+      "players" = 'Player',
+      "teams" = 'Team',
+      "draft" = 'Player'
+    )
+  })
+  
+  comparisonIndividualChoices <- reactive({
+    comparisonDatasetChosen() %>% 
+      select(comparisonIndividualSelected())
+    
+  })
+  
+  output$comparison_player1 <- renderUI({
+    selectInput("comparison_select_player1", label = "Choose a player", 
+            choices = comparisonIndividualChoices())
+  })
+  
+  output$comparison_player2 <- renderUI({
+    selectInput("comparison_select_player2", label = "Choose a player", 
+                choices = comparisonIndividualChoices())
+  })
+  
+ 
+  output$comparison_barplot <- renderPlot({
+    # d_season_combined %>% 
+    #   filter(Player=="Steven Adams"| Player=="Stephen Curry", Season =="2018-2019") %>% 
+    #   ggplot(aes(PTS, AST))+geom_point()
+    
+  })
+  
+  
   
   # ---------------- Screener ---------------
   
@@ -420,25 +459,28 @@ server <- function(input, output, session) {
     p_histogram()
   })
   
-  scatterplot_text_label <- reactive({
-    text <-  switch(
-      datasetInput(),
-      "players" = Player,
-      "teams" = Team,
-      "draft" = Player
+  leaderboardColumnBase <- reactive({
+     switch(
+       input$select_dataset,
+      "players" = 'Player',
+      "teams" = 'Team',
+      "draft" = 'Player'
     )
     
   })
   
   ## todo: change player to team with scatterplot_text_label()
   p_scatterplot <- reactive({
+    # individualName <- datasetInput() %>%
+    #   select(leaderboardColumnBase())
+    
     datasetInput() %>%
       filter(Season == seasonInput()) %>%
       ggplot(aes(
         x = get(variableInputX()),
         y = get(variableInputY())
       )) +
-      geom_point(aes(text = Player),
+      geom_point(aes(text = get(leaderboardColumnBase())),
                  alpha = 0.6,
                  color = "#69b3a2") +
       geom_smooth(method = lm, se = TRUE) +

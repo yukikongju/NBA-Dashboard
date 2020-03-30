@@ -41,7 +41,6 @@ ui <- navbarPage(
             column(4,
                    uiOutput("leaderboard_stats_choices"))
         )
-        ##sliderInput("leaderboard_slider", min = 10, max=60, label = "Top :", value = 20)
        ),
        fluidRow(
            column(8, 
@@ -99,7 +98,27 @@ ui <- navbarPage(
              )),
     
     # ---------------- Comparison ----------------------
-    tabPanel("Comparison", ),
+    tabPanel("Comparison", 
+            fluidPage(
+              titlePanel("Comparison"),
+              sidebarLayout(
+                sidebarPanel(
+                  selectInput("comparison_dataset_input", label="Select a dataset", choices = c(
+                    "Players Stats" = "players",
+                    "Teams Stats" = "teams",
+                    "Draft" = "drafts"
+                  )),
+                  uiOutput("comparison_season"),
+                  uiOutput("comparison_player1"),
+                  uiOutput("comparison_player2")
+                ),
+                fluidRow(
+                  splitLayout(
+                    plotOutput("comparison_barplot")
+                  )
+                )
+              )
+            ) ),
     
     # ---------------  Screener ----------------
     
