@@ -83,10 +83,7 @@ server <- function(input, output, session) {
       top_n(60)
     
   })
-  
- 
-  
-  ### todo: player swtich to team
+
   output$leaderboard_summary <- renderPrint({
     
   })
@@ -518,7 +515,7 @@ server <- function(input, output, session) {
   
   output$dataset_summary <- renderPrint({
     ds <- datasetInput() %>%
-      select(-c(Player, Team, Season, Pos))
+      select_if(is.numeric)
     summary(ds)
     
     
